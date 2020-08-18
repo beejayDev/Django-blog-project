@@ -1,10 +1,28 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, get_user_model
 
-class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField()
+
+class CreationForm(UserCreationForm):
+    """
+    A Custom form for creating new users.
+    """
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ['email', 'username', 'password1', 'password2']
+
+
+class AuthForm(forms.ModelForm):
+    password = forms.CharField(label='password', widget=forms.PasswordInput)
+
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'password')
+
+    def clean(self):
+        if self.is_valid():
+            email = self.cleaned_data['email']
+            password = self.cleaned_data['password']
+        if not authenticate(email=email, password=password):
+            raise forms.ValidationError("Invalid Email or password")

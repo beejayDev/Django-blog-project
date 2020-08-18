@@ -126,6 +126,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+AUTH_USER_MODEL = 'users.AccountUser'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = 'blog-home'
