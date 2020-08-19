@@ -3,9 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from users.forms import CreationForm, AuthForm
+
 # Create your views here
-
-
 def register(request):
     form = CreationForm()
     if request.method == 'POST':

@@ -1,7 +1,8 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
+#from django.conf import settings 
+from django.contrib.auth import get_user_model
 
 class AccountUserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -42,7 +43,21 @@ class AccountUser(AbstractUser):
     #username = None
     email = models.EmailField(_('email address'), unique=True)
 
+    def __str__(self):
+        return self.email
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
     objects = AccountUserManager()
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    image = models.ImageField(default='default.jpeg', upload_to='profile_pics')
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+
+
