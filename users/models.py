@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-#from django.conf import settings 
+from django.utils.translation import ugettext_lazy as _ 
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from PIL import Image
 
 class AccountUserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -54,10 +56,24 @@ class AccountUser(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpeg', upload_to='profile_pics')
+    image = models.ImageField(default='default.jpg', upload_to='picture')
 
     def __str__(self):
         return f"{self.user.username} Profile"
 
+    def save(self):
+        super().save()
 
+        img = Image.open(self.image.path)
+
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.image.path)
+
+def create_profile(sender, **kwargs):
+    if kwargs['created']:
+        profile = Profile.objects.create(user=kwargs['instance'])
+
+post_save.connect(create_profile, sender=get_user_model())
 

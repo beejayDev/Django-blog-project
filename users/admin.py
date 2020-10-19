@@ -23,5 +23,5 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email', 'username')
 
 
-admin.site.register(get_user_model(), CustomUserAdmin)
 admin.site.register(Profile)
+admin.site.register(get_user_model(), CustomUserAdmin)
